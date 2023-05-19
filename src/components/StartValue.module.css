@@ -48,4 +48,7 @@
 
 .errorMessage {
     color: red;
+    font-size: 10px;
+    margin-left: 155px;
+
 }

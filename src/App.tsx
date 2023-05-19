@@ -28,7 +28,6 @@ function App() {
                                     maxValue={maxValue}
                                     setMinValue={setMinValue}
                                     setMaxValue={setMaxValue}
-                                    setCount={setCount}
                                     onEditModeChange={onEditModeChange}
                         />
                     </div>)

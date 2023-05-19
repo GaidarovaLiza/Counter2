@@ -1,43 +1,42 @@
 import s from './StartValue.module.css'
-import {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import {SuperButton} from "./SuperButton";
 import {SET_NAME} from "../constans";
 
 
-type PropsType = {
+type StartValuePropsType = {
     minValue: number
     maxValue: number
     setMinValue: (minValue: number) => void
     setMaxValue: (maxValue: number) => void
-    setCount: (count: number) => void
     onEditModeChange: () => void
 }
 
-export const StartValue = (props: PropsType) => {
-    const [minValueError, setMinValueError] = useState(false);
-    const [maxValueError, setMaxValueError] = useState(false);
-
-
-    const minValueHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        const minValue = +e.currentTarget.value
-        if (isNaN(minValue)) {
-            setMinValueError(true);
-        } else {
-            setMinValueError(false);
-            props.setMinValue(minValue);
-        }
-
+export const StartValue: React.FC<StartValuePropsType> = (
+    {
+        minValue,
+        maxValue,
+        setMinValue,
+        setMaxValue,
+        onEditModeChange
     }
+) => {
+    const [error, setError] = useState(false)
 
-    const maxValueHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        const maxValue = +e.currentTarget.value
-        if (isNaN(maxValue)) {
-            setMaxValueError(true);
+    const minValueHandler = (e: ChangeEvent<HTMLInputElement>) => setMinValue(parseInt(e.currentTarget.value));
+
+    const maxValueHandler = (e: ChangeEvent<HTMLInputElement>) => setMaxValue(parseInt(e.currentTarget.value));
+
+    const onEditModeChangeHandler = () => {
+        if (maxValue > minValue) {
+            onEditModeChange()
+            setError(false)
         } else {
-            setMaxValueError(false);
-            props.setMaxValue(maxValue);
+            setError(true)
         }
     }
+
+    const finalInputStyle = error ? ` ${s.input} ${s.inputError}` : s.input
 
 
     return (
@@ -45,19 +44,18 @@ export const StartValue = (props: PropsType) => {
             <div className={s.value}>
                 <div className={s.textAndInput}>
                     <p>MAX VALUE:</p>
-                    <input value={props.maxValue} onChange={maxValueHandler}
-                           className={maxValueError ? ` ${s.input} ${s.inputError}` : s.input} type="number"/>
-                    {maxValueError && <p className={s.errorMessage}>Введите число!</p>}
+                    <input value={maxValue} onChange={maxValueHandler}
+                           className={finalInputStyle} type="number"/>
                 </div>
+                {error && <div className={s.errorMessage}>Max Value should be more then Min Value!</div>}
                 <div className={s.textAndInput}>
                     <p>START VALUE:</p>
-                    <input value={props.minValue} onChange={minValueHandler}
-                           className={minValueError ? `${s.input} ${s.inputError}` : s.input} type="number"/>
-                    {minValueError && <p className={s.errorMessage}>Введите число!</p>}
+                    <input value={minValue} onChange={minValueHandler}
+                           className={s.input} type="number"/>
                 </div>
             </div>
             <div className={s.buttonWrapper}>
-                <SuperButton name={SET_NAME} callback={props.onEditModeChange} disable={false}/>
+                <SuperButton name={SET_NAME} callback={onEditModeChangeHandler} disable={false}/>
             </div>
         </div>
     )
