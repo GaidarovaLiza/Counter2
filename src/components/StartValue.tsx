@@ -21,22 +21,40 @@ export const StartValue: React.FC<StartValuePropsType> = (
         onEditModeChange
     }
 ) => {
-    const [error, setError] = useState(false)
+    const [minError, setMinError] = useState(false)
+    const [maxError, setMaxError] = useState(false)
 
-    const minValueHandler = (e: ChangeEvent<HTMLInputElement>) => setMinValue(parseInt(e.currentTarget.value));
+    const minValueHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        let minValue = parseInt(e.currentTarget.value)
+        if (minValue > 0) {
+            setMinValue(minValue)
+            setMinError(false)
+        } else {
+            setMinError(true)
+        }
+    }
 
-    const maxValueHandler = (e: ChangeEvent<HTMLInputElement>) => setMaxValue(parseInt(e.currentTarget.value));
+
+    const maxValueHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        let maxValue = parseInt(e.currentTarget.value)
+        if (maxValue > 0) {
+            setMaxValue(maxValue)
+            setMaxError(false)
+        } else {
+            setMaxError(true)
+        }
+    }
 
     const onEditModeChangeHandler = () => {
         if (maxValue > minValue) {
             onEditModeChange()
-            setError(false)
-        } else {
-            setError(true)
+            setMinError(false)
+            setMaxError(false)
         }
     }
 
-    const finalInputStyle = error ? ` ${s.input} ${s.inputError}` : s.input
+    const minFinalInputStyle = minError ? ` ${s.input} ${s.inputError}` : s.input
+    const maxFinalInputStyle = maxError ? ` ${s.input} ${s.inputError}` : s.input
 
 
     return (
@@ -45,14 +63,15 @@ export const StartValue: React.FC<StartValuePropsType> = (
                 <div className={s.textAndInput}>
                     <p>MAX VALUE:</p>
                     <input value={maxValue} onChange={maxValueHandler}
-                           className={finalInputStyle} type="number"/>
+                           className={maxFinalInputStyle} type="number"/>
                 </div>
-                {error && <div className={s.errorMessage}>Max Value should be more then Min Value!</div>}
+                {maxError && <span className={s.errorMessage}>Incorrect value!</span>}
                 <div className={s.textAndInput}>
                     <p>START VALUE:</p>
                     <input value={minValue} onChange={minValueHandler}
-                           className={s.input} type="number"/>
+                           className={minFinalInputStyle} type="number"/>
                 </div>
+                {minError && <span className={s.errorMessage}>Incorrect value!</span>}
             </div>
             <div className={s.buttonWrapper}>
                 <SuperButton name={SET_NAME} callback={onEditModeChangeHandler} disable={false}/>
