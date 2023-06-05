@@ -10,7 +10,7 @@ const initialState: CountStateType = {
     isEditableMode: false
 }
 
-type ActionsType = ResetCountACType | IncCountACType | SetCountACType
+type ActionsType = ResetCountACType | IncCountACType | SetCountACType | changeEditModeACType
 
 export const CountReducer = (state = initialState, action: ActionsType) => {
     switch (action.type) {
@@ -29,11 +29,17 @@ export const CountReducer = (state = initialState, action: ActionsType) => {
             }
         }
         case "SET-COUNT": {
-            let newCount = Math.max(action.payload.minValue, Math.min(action.payload.maxValue, action.payload.count))
+
             return {
                 ...state,
-                count: newCount,
-                isEditableMode: false
+                count: action.payload.minValue,
+                isEditableMode: action.payload.isEditableMode
+            }
+        }
+        case 'CHANGE-EDIT-MODE': {
+            return {
+                ...state,
+                isEditableMode: action.payload.isEditable
             }
         }
         default: {
@@ -67,13 +73,23 @@ export const resetCountAC = (minValue: number) => {
 
 type SetCountACType = ReturnType<typeof setCountAC>
 
-export const setCountAC = (count: number, minValue: number, maxValue: number) => {
+export const setCountAC = (minValue: number, isEditableMode: boolean) => {
     return {
         type: "SET-COUNT",
         payload: {
-            count,
             minValue,
-            maxValue
+            isEditableMode
+        }
+    } as const
+}
+
+type changeEditModeACType = ReturnType<typeof changeEditModeAC>
+
+export const changeEditModeAC = (isEditable: boolean) => {
+    return {
+        type: "CHANGE-EDIT-MODE",
+        payload: {
+            isEditable
         }
     } as const
 }

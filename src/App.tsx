@@ -1,11 +1,12 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import './App.css';
-import {INITIAL_COUNT, MAX_COUNT} from "./constans";
 import {StartValue} from "./components/StartValue";
 import {Display} from "./components/Display";
 import {AppRootStateType} from "./store/state";
 import {useDispatch, useSelector} from "react-redux";
-import {setCountAC} from "./store/Reducers/CountReducer";
+import {changeEditModeAC, setCountAC} from "./store/Reducers/CountReducer";
+// import {changeEditModeAC} from "./store/Reducers/EditModeReducer";
+
 
 export type CountStateType = {
     count: number
@@ -16,33 +17,42 @@ export type CountStateType = {
     isEditableMode: boolean
 }
 
+export type MinValueStateType = {
+    minValue: number
+    minValueError: boolean
+}
+
+export type MaxValueStateType = {
+    maxValue: number
+    maxValueError: boolean
+}
+
+// export type EditModeStateType = {
+//     isEditMode: boolean
+// }
+
 function App() {
     let count = useSelector<AppRootStateType, CountStateType>(state => state.count)
+    let minValue = useSelector<AppRootStateType, MinValueStateType>(state => state.minValue)
+    let maxValue = useSelector<AppRootStateType, MaxValueStateType>(state => state.maxValue)
+    //let isEditMode = useSelector<AppRootStateType, EditModeStateType>(state => state.isEditMode)
 
     const dispatch = useDispatch()
 
-    const [minValue, setMinValue] = useState<number>(INITIAL_COUNT)
-    const [maxValue, setMaxValue] = useState<number>(MAX_COUNT)
-    const [isEditMode, setIsEditMode] = useState<boolean>(false)
-
     const onEditModeChange = () => {
-        setIsEditMode(false)
-        dispatch(setCountAC(count.count, minValue, maxValue))
+        debugger
+        dispatch(setCountAC(minValue.minValue, false))
     }
 
-    const handleSetMode = () => {
-        setIsEditMode(true);
-    };
-
+    const handleSetMode = () => dispatch(changeEditModeAC(true))
 
     return (
         <div className='wrapper'>
-            {isEditMode ? (
+            {count.isEditableMode ? (
                     <div>
                         <StartValue minValue={minValue}
                                     maxValue={maxValue}
-                                    setMinValue={setMinValue}
-                                    setMaxValue={setMaxValue}
+                                    dispatch={dispatch}
                                     onEditModeChange={onEditModeChange}
                         />
                     </div>)
